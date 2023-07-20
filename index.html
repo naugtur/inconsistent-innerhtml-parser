@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document. Or is it?</title>
+  </head>
+  <body>
+    <div id="adiv"></div>
+
+    <script>
+      // Hello. I'm a script that won't use string manipulation to create DOM.
+      // I might as well be a react component
+      const targetNode = document.body;
+
+      // framework enough
+      const $ = (tag) => {
+        const root = document.createElement(tag);
+        let nestParent = root;
+        const nest = (tag) => {
+          const a = document.createElement(tag);
+          nestParent.appendChild(a);
+          nestParent = a;
+          return { get: () => a, nest };
+        };
+        return {
+          root,
+          nest,
+        };
+      };
+
+      const builder = $("form");
+      const styleElem = builder
+        .nest("math")
+        .nest("mtext")
+        .nest("form")
+        .nest("mglyph")
+        .nest("style")
+        .get();
+      const justText = document.createTextNode(
+        `</math><iframe src='javascript:alert(1)'></iframe>`
+      );
+      styleElem.appendChild(justText);
+      targetNode.appendChild(builder.root);
+    </script>
+
+    <script>
+      // Hello. I'm a script that will use innerHTML with a static string containing trustworthy content
+      setTimeout(() => {
+        confirm("Have you seen an alert yet?");
+        targetNode.innerHTML += "<blockquote>Oh gee</blockquote>";
+      }, 2);
+
+      // This might as well be a tracking script that takes bits of the page 
+      // by reading innerHTML and sends them elsewhere to be re-rendered
+    </script>
+  </body>
+</html>
